@@ -1,0 +1,18 @@
+:root {
+  --color-primary: #1e3a8a;
+  --color-accent: #f97316;
+  --color-bg: #f8fafc;
+  --color-text: #0f172a;
+}
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+.app-navbar {
+  background: var(--color-primary);
+}
+
+.app-navbar .nav-link.active {
+  color: var(--color-accent);
+  font-weight: 600;
+}
