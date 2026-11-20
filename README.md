@@ -1,16 +1,29 @@
-# React + Vite
+# SkillUp
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Application web d'apprentissage réalisée en React (Vite) dans le cadre du module **Frameworks Web (React.js)**, 3ème Licence GLSI, IIT Sfax.
 
-Currently, two official plugins are available:
+**Binôme** : Yessine Louati et Mouhamed Chaabouni.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Fonctionnalités
 
-## React Compiler
+| Module | Route | Contenu |
+|---|---|---|
+| Catalogue | `/ressources`, `/ressources/:id` | API Open Library, recherche (formulaire contrôlé), filtre par domaine, détail, chargement / erreurs / résultats vides, « Voir plus » |
+| Favoris | `/favoris` | Ajout / retrait sans doublon, `localStorage`, filtre et tri |
+| Révisions | `/revisions` | Tâches avec validation, statut, filtres, barre de progression, `localStorage` |
+| Assistant IA | `/assistant` + bulle flottante | Gemini ou Groq, clé dans `.env.local`, chargement, erreurs, texte brut |
+| Navigation | toutes | Barre latérale avec `NavLink`, burger mobile, responsive, accueil avec statistiques |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Démarrer
 
-## Expanding the ESLint configuration
+```bash
+npm install
+cp .env.example .env.local   # puis coller la clé API dans .env.local
+npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Voir `README.txt` pour les instructions détaillées.
+
+## Stack
+
+React 19, React Router 7, Vite 8, Bootstrap 5 (CSS) + Bootstrap Icons, JavaScript.
