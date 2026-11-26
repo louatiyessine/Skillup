@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import ChatPanel from './ChatPanel'
 import Mascot from './Mascot'
 
 // Bouton flottant en bas à droite qui ouvre le chat dans un petit panneau.
+// (Il n'est pas affiché sur /assistant : c'est MainLayout qui décide.)
 function ChatWidget({ messages, loading, error, onAsk, onRetry, onClear }) {
   const [open, setOpen] = useState(false)
-  const { pathname } = useLocation()
   // Référence vers le bouton rond : on lui rend le focus à la fermeture (accessibilité clavier).
   const fabRef = useRef(null)
 
@@ -27,10 +27,6 @@ function ChatWidget({ messages, loading, error, onAsk, onRetry, onClear }) {
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [open])
-
-  // Sur /assistant, le chat est déjà en pleine page : pas de bulle.
-  // (Ce return est APRÈS les Hooks : les Hooks sont toujours appelés dans le même ordre.)
-  if (pathname === '/assistant') return null
 
   return (
     <div className="chat-widget">

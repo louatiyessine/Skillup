@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import ChatWidget from './components/ChatWidget'
-import ScrollToTop from './components/ScrollToTop'
-import Sidebar from './components/Sidebar'
-import Toast from './components/Toast'
+import MainLayout from './components/MainLayout'
 import { useAssistant } from './hooks/useAssistant'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import AssistantPage from './pages/AssistantPage'
@@ -20,6 +17,7 @@ import { getTaskStats, isValidTask, STATUS } from './utils/tasks'
 /**
  * App possède l'état PARTAGÉ (favoris, tâches, conversation IA)
  * et le transmet aux pages par props, avec les fonctions pour le modifier.
+ * Le cadre commun (Sidebar, chat, Toast) est dans MainLayout, qui affiche les pages avec <Outlet />.
  */
 function App() {
   const [savedFavorites, setFavorites] = useLocalStorage('skillup.favorites', [])
@@ -107,77 +105,79 @@ function App() {
     onClear: assistant.clear,
   }
 
+  // Props de la barre latérale (badges et progression).
+  const sidebarProps = {
+    favoritesCount: favorites.length,
+    pendingCount: stats.pending,
+    progress: stats.percent,
+    doneCount: stats.done,
+    totalCount: stats.total,
+  }
+
   return (
-    <div className="app-shell">
-      <a href="#main-content" className="skip-link">
-        Aller au contenu
-      </a>
-      <ScrollToTop />
-
-      <Sidebar
-        favoritesCount={favorites.length}
-        pendingCount={stats.pending}
-        progress={stats.percent}
-        doneCount={stats.done}
-        totalCount={stats.total}
-      />
-
-      <main id="main-content" className="app-main" tabIndex={-1}>
-        <div className="app-container">
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <HomePage
-                  favorites={favorites}
-                  tasks={tasks}
-                  onAsk={assistant.ask}
-                  assistantBusy={assistant.loading}
-                />
-              }
+    <Routes>
+      {/* Route PARENTE : MainLayout affiche le cadre commun (Sidebar, chat, Toast)
+          et place la page enfant active dans son <Outlet />. */}
+      <Route
+        path="/"
+        element={
+          <MainLayout
+            sidebarProps={sidebarProps}
+            chatProps={chatProps}
+            toast={toast}
+            onCloseToast={() => setToast(null)}
+          />
+        }
+      >
+        {/* Routes ENFANTS : chemins relatifs au parent "/" */}
+        <Route
+          index
+          element={
+            <HomePage
+              favorites={favorites}
+              tasks={tasks}
+              onAsk={assistant.ask}
+              assistantBusy={assistant.loading}
             />
-            <Route
-              path="/ressources"
-              element={<ResourcesPage favorites={favorites} onToggleFavorite={handleToggleFavorite} />}
+          }
+        />
+        <Route
+          path="ressources"
+          element={<ResourcesPage favorites={favorites} onToggleFavorite={handleToggleFavorite} />}
+        />
+        <Route
+          path="ressources/:id"
+          element={
+            <ResourceDetailPage
+              favorites={favorites}
+              tasks={tasks}
+              onToggleFavorite={handleToggleFavorite}
+              onAddTask={handleAddTask}
+              onAsk={assistant.ask}
+              assistantBusy={assistant.loading}
             />
-            <Route
-              path="/ressources/:id"
-              element={
-                <ResourceDetailPage
-                  favorites={favorites}
-                  tasks={tasks}
-                  onToggleFavorite={handleToggleFavorite}
-                  onAddTask={handleAddTask}
-                  onAsk={assistant.ask}
-                  assistantBusy={assistant.loading}
-                />
-              }
+          }
+        />
+        <Route
+          path="favoris"
+          element={<FavoritesPage favorites={favorites} onToggleFavorite={handleToggleFavorite} />}
+        />
+        <Route
+          path="revisions"
+          element={
+            <RevisionsPage
+              tasks={tasks}
+              onAddTask={handleAddTask}
+              onToggleTask={handleToggleTask}
+              onDeleteTask={handleDeleteTask}
+              onClearCompleted={handleClearCompleted}
             />
-            <Route
-              path="/favoris"
-              element={<FavoritesPage favorites={favorites} onToggleFavorite={handleToggleFavorite} />}
-            />
-            <Route
-              path="/revisions"
-              element={
-                <RevisionsPage
-                  tasks={tasks}
-                  onAddTask={handleAddTask}
-                  onToggleTask={handleToggleTask}
-                  onDeleteTask={handleDeleteTask}
-                  onClearCompleted={handleClearCompleted}
-                />
-              }
-            />
-            <Route path="/assistant" element={<AssistantPage {...chatProps} />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </div>
-      </main>
-
-      <ChatWidget {...chatProps} />
-      <Toast toast={toast} onClose={() => setToast(null)} />
-    </div>
+          }
+        />
+        <Route path="assistant" element={<AssistantPage {...chatProps} />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   )
 }
 
