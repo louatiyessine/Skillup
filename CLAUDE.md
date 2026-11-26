@@ -64,6 +64,7 @@ Préférences exprimées :
 | API livres | Open Library |
 | IA | **Gemini par défaut** (`gemini-3.5-flash-lite`), **Groq possible** (`VITE_AI_PROVIDER=groq`, modèle `openai/gpt-oss-20b`). Modèle modifiable avec `VITE_AI_MODEL`. |
 | Navigation | Barre latérale verticale à gauche (burger sur mobile) |
+| Layout | **Routes imbriquées** (ajouté le 26 novembre, demande de l'enseignante) : route parente `/` avec `MainLayout` (même nom et même schéma que le chapitre 7, partie 1), pages en routes enfants (`index`, `ressources`...) affichées dans `<Outlet />`. Le state reste dans `App`, passé par props (pas de `useOutletContext`). `ScrollToTop.jsx` supprimé (son `useEffect` est dans `MainLayout`) ; c'est `MainLayout` qui cache la bulle sur `/assistant`. |
 | Assistant | Bouton flottant en bas à droite + page `/assistant`. **Même conversation** dans les deux (hook `useAssistant` appelé dans `App`). La bulle est cachée sur `/assistant`. |
 | Palette | Indigo et menthe (variables dans `theme.css`) |
 | Mascotte | « Skilly », SVG original (`Mascot.jsx`), humeurs `happy`, `thinking`, `sad`, `proud` |
@@ -84,6 +85,7 @@ Règles ESLint actives (eslint-plugin-react-hooks 7) : `set-state-in-effect` et 
 skillup/
 ├─ src/
 │  ├─ components/
+│  │   ├─ MainLayout.jsx      route parente (nom repris du chapitre 7) : Sidebar + <Outlet /> + ChatWidget (caché sur /assistant) + Toast ; remonte en haut à chaque changement de page
 │  │   ├─ Sidebar.jsx         NavLink + badges + progression + burger mobile (Échap pour fermer)
 │  │   ├─ Mascot.jsx          SVG de Skilly (props size, mood, animated, title ; useId)
 │  │   ├─ ChatWidget.jsx      bouton flottant + panneau (utilise ChatPanel)
@@ -93,8 +95,7 @@ skillup/
 │  │   ├─ SearchForm.jsx      formulaire contrôlé (validation 3 caractères)
 │  │   ├─ CategoryFilter.jsx  filtre par domaine
 │  │   ├─ Spinner.jsx, ErrorMessage.jsx, EmptyState.jsx, PageHeader.jsx, StatCard.jsx, Toast.jsx
-│  │   ├─ TaskForm.jsx, TaskList.jsx, TaskItem.jsx, TaskFilters.jsx, ProgressBar.jsx
-│  │   └─ ScrollToTop.jsx     remonte en haut à chaque changement de page
+│  │   └─ TaskForm.jsx, TaskList.jsx, TaskItem.jsx, TaskFilters.jsx, ProgressBar.jsx
 │  ├─ pages/                  HomePage, ResourcesPage, ResourceDetailPage, FavoritesPage,
 │  │                          RevisionsPage, AssistantPage, NotFoundPage
 │  ├─ services/
@@ -108,7 +109,7 @@ skillup/
 │  │   ├─ dates.js            todayISO, addDays, daysUntil, formatDate, describeDeadline
 │  │   └─ tasks.js            STATUS, TASK_FILTERS, getTaskStats, sortTasks
 │  ├─ styles/theme.css
-│  ├─ App.jsx                 state partagé + routes + Sidebar + ChatWidget + Toast
+│  ├─ App.jsx                 state partagé + routes imbriquées (parent MainLayout, enfants = pages)
 │  └─ main.jsx                BrowserRouter + imports CSS
 ├─ .env.example               modèle sans clé (à copier en .env.local)
 ├─ README.txt                 exigé par l'enseignante
